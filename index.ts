@@ -339,19 +339,13 @@ export default class IndexDB {
       cursor.onsuccess = (e: Event) => {
         const result = (e.target as IDBRequest).result;
         if (result) {
-          if (!keysField) {
-            if (this._compareType(result.value, keyword)) {
+          if(Array.isArray(keysField)){
+            if (keysField.some((key: string) => this._compareType(result.value, keyword, key))) {
               data.push(result.value);
             }
-          } else {
-            if (typeof keysField === 'string') {
-              if (this._compareType(result.value, keyword, keysField)) {
-                data.push(result.value);
-              }
-            } else {
-              if (keysField.some((key: string) => this._compareType(result.value, keyword, key))) {
-                data.push(result.value);
-              }
+          }else{
+            if (this._compareType(result.value, keyword, keysField)) {
+              data.push(result.value);
             }
           }
           result.continue();
